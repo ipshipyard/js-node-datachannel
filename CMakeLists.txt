@@ -33,8 +33,8 @@ include(FetchContent)
 # Fetch libdatachannel
 FetchContent_Declare(
     libdatachannel
-    GIT_REPOSITORY https://github.com/paullouisageneau/libdatachannel.git
-    GIT_TAG "v0.22.2"
+    GIT_REPOSITORY https://github.com/achingbrain/libdatachannel.git
+    GIT_TAG 6673ce95223179f49db4a7f7e23852363501983e # feat/libjuice-with-mux-callbacks
 )
 
 option(NO_MEDIA "Disable media transport support in libdatachannel" OFF)

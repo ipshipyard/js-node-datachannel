@@ -6,6 +6,9 @@ on:
   #   tags:
   #     - v*
 
+permissions:
+  contents: write
+
 env:
   ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
@@ -65,6 +68,11 @@ jobs:
             gxx: arm-linux-gnueabihf-g++
 
     steps:
+      - name: Fail if branch is not master
+        if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/master'
+        run: |
+          echo "This workflow should not be triggered with workflow_dispatch on a branch other than master"
+          exit 1
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
