@@ -12,7 +12,8 @@
 
 #include "thread-safe-callback.h"
 
-class DataChannelWrapper : public Napi::ObjectWrap<DataChannelWrapper>
+class DataChannelWrapper : public Napi::ObjectWrap<DataChannelWrapper>,
+                         public std::enable_shared_from_this<DataChannelWrapper>
 {
 public:
   static Napi::FunctionReference constructor;
