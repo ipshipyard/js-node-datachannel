@@ -12,7 +12,8 @@
 
 #include "thread-safe-callback.h"
 
-class WebSocketWrapper : public Napi::ObjectWrap<WebSocketWrapper>
+class WebSocketWrapper : public Napi::ObjectWrap<WebSocketWrapper>, 
+                        public std::enable_shared_from_this<WebSocketWrapper>
 {
 public:
   static Napi::FunctionReference constructor;

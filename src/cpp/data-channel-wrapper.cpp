@@ -434,21 +434,26 @@ void DataChannelWrapper::onBufferedAmountLow(const Napi::CallbackInfo &info)
     // Callback
     mOnBufferedAmountLowCallback = std::make_unique<ThreadSafeCallback>(info[0].As<Napi::Function>());
 
-    mDataChannelPtr->onBufferedAmountLow([&]()
-                                         {
-        PLOG_DEBUG << "onBufferedAmountLow cb received from rtc";
-        if (mOnBufferedAmountLowCallback)
-            mOnBufferedAmountLowCallback->call([this](Napi::Env env, std::vector<napi_value> &args) {
-                PLOG_DEBUG << "mOnBufferedAmountLowCallback call(1)";
-                // Check the data channel is not closed
-                if(instances.find(this) == instances.end())
-                    throw ThreadSafeCallback::CancelException();
+    std::weak_ptr<DataChannelWrapper> weakThis = shared_from_this();
+    auto callback = mOnBufferedAmountLowCallback;
 
-                // This will run in main thread and needs to construct the
-                // arguments for the call
-                args = {};
-                PLOG_DEBUG << "mOnBufferedAmountLowCallback call(2)";
-            }); });
+    mDataChannelPtr->onBufferedAmountLow([callback, weakThis]() {
+        PLOG_DEBUG << "onBufferedAmountLow cb received from rtc";
+        if (callback) {
+            callback->call([weakThis](Napi::Env env, std::vector<napi_value> &args) {
+                PLOG_DEBUG << "mOnBufferedAmountLowCallback call(1)";
+                
+                if (auto self = weakThis.lock()) {
+                    // This will run in main thread and needs to construct the
+                    // arguments for the call
+                    args = {};
+                    PLOG_DEBUG << "mOnBufferedAmountLowCallback call(2)";
+                } else {
+                    throw ThreadSafeCallback::CancelException();
+                }
+            });
+        }
+    });
 }
 
 void DataChannelWrapper::onMessage(const Napi::CallbackInfo &info)
