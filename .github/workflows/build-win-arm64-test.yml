@@ -41,7 +41,8 @@ jobs:
         run: |
           git clone https://github.com/microsoft/vcpkg.git C:\vcpkg
           cd C:\vcpkg
-          .\bootstrap-vcpkg.bat
+          dir
+          bootstrap-vcpkg.bat
         shell: cmd
 
       - name: Install OpenSSL (Static) for Windows ARM64
